@@ -1,3 +1,4 @@
+import 'package:ethereum_addresses/ethereum_addresses.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -41,44 +42,72 @@ class _CreateWalletPageState extends State<createWalletPage> {
     final privateKeyHex = HEX.encode(childKey.privateKey!);
     final publicKeyHex = HEX.encode(childKey.publicKey);
 
+    //새로운 방법
+    final aa = HEX.decode(publicKeyHex);
+    final aa1 = ethereumAddressFromPublicKey(Uint8List.fromList(aa));
+    final aa2 = checksumEthereumAddress(aa1);
+
+    print("공개키 1 : $aa");
+    print("공개키 2 : $aa1");
+    print("공개키 3 : $aa2");
+    print("공개키 4 : ${isValidEthereumAddress(aa2)}");
+
+    //공개키 20바이트 자르고 0x 붙이는 방법
+    // final tt = keccak256(childKey.publicKey);
+    // final tt1 = tt.sublist(tt.length - 20);
+    // final tt2 = HEX.encode(tt1);
+    // final ttPublicKey = '0x' + tt2;
+
+    // print("공개키 : $publicKeyHex");
+    // print("공개키 : ${publicKeyHex.length}");
+    // print("공개키 1 : ${tt}");
+    // print("공개키 1 : ${tt.length}");
+    // print("공개키 2 : ${tt1}");
+    // print("공개키 2 : ${tt1.length}");
+    // print("공개키 3 : ${tt2}");
+    // print("공개키 3 : ${tt2.length}");
+    // print("공개키 주소 변환 : ${ttPublicKey}");
+    // print("공개키 주소 길이 : ${ttPublicKey.length}");
+
     ////////////////////////////////////////////////////
     //공개키 64길이로 맞추기. 제일제일제일제일 중요~!!!
-    final publicKey = Uint8List(64);
-    publicKey.setAll(0, childKey.publicKey);
+    // final publicKey = Uint8List(64);
+    // publicKey.setAll(0, childKey.publicKey);
     ////////////////////////////////////////////////////
 
     //개인키
-    final privateKey = childKey.privateKey.toString();
+    // final privateKey = childKey.privateKey.toString();
 
-    final credentials = EthPrivateKey.fromHex(privateKeyHex);
+    // final credentials = EthPrivateKey.fromHex(privateKeyHex);
 
     //공개키 이더리움 주소로 변환
-    final pKAddress = EthereumAddress.fromPublicKey(publicKey).toString();
+    // final pKAddress = EthereumAddress.fromPublicKey(publicKey).toString();
     //이더리움 EIP-55 체크섬 주소로 변환
-    final publicKeyAddress = eip55.toChecksumAddress(pKAddress);
+    // final publicKeyAddress = eip55.toChecksumAddress(pKAddress);
 
     // Get the Ethereum address using the updated method.
-    final address = await credentials.extractAddress();
-    final ethereumAddress = address.hexEip55;
+    // final address = await credentials.extractAddress();
+    // final ethereumAddress = address.hexEip55;
 
     final wallet = {
       'name': '이더리움',
       'coinType': 'ETH',
       'symbol': 'ETH',
-      'address': publicKeyAddress
+      'address': aa2
     };
 
     await saveWallet(wallet, privateKeyHex);
 
     /////////////////////////////////////
-    await getBalance(publicKeyAddress);
+    await getBalance(aa2);
     /////////////////////////////////////
-
+    ///
+    ///
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('생성된 지갑 주소(공개키)'),
-        content: Text(publicKeyAddress),
+        content: Text(aa2),
         actions: <Widget>[
           ElevatedButton(
             child: const Text('확인'),
@@ -121,7 +150,6 @@ class _CreateWalletPageState extends State<createWalletPage> {
 
     final address = EthereumAddress.fromHex(publickey);
     final balance = await ethClient.getBalance(address);
-    print("여기 보세요 ㅎㅎㅅㅂ");
     print(balance.getInEther);
     return balance.getInEther;
   }

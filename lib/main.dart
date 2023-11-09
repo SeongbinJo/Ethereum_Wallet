@@ -34,6 +34,7 @@ class mainPage extends StatefulWidget {
 class _mainPageState extends State<mainPage> {
   final storage = FlutterSecureStorage(); //지갑의 정보를 저장하기 위한 로컬 저장소.
   List<dynamic> walletList = []; //지갑의 정보를 담아두기 위한 변수 선언
+  List<dynamic> walletalllist = [];
 
   //flutter_secure_storage 사용을 위한 초기화 작업
   @override

@@ -30,9 +30,7 @@ class _walletCardState extends State<walletCard> {
 
     final address = EthereumAddress.fromHex(publickey);
     final balance = await ethClient.getBalance(address);
-    print("여기 보세요 ㅎㅎㅅㅂ");
-    print(balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(3));
-    return balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(3);
+    return balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(20);
   }
 
   @override

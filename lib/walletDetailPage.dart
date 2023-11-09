@@ -42,9 +42,8 @@ class _walletDetailPageState extends State<walletDetailPage> {
 
     final address = EthereumAddress.fromHex(publickey);
     final balance = await ethClient.getBalance(address);
-    print("여기 보세요 ㅎㅎㅅㅂ");
-    print(balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(3));
-    return balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(3);
+    print(balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(4));
+    return balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(4);
   }
 
   Future<void> fetchBalance() async {
