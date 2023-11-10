@@ -53,13 +53,6 @@ class _mainPageState extends State<mainPage> {
     }
   }
 
-  removeAllData() async {
-    await storage.deleteAll();
-    setState(() {
-      walletList = [];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -113,15 +106,11 @@ class _mainPageState extends State<mainPage> {
               return walletCard(
                 wallets: walletList,
                 index: index,
+                fucn1: getWalletData(),
+                // onPopFunction: getWalletData(),
               );
             }
           },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            removeAllData();
-          },
-          child: Icon(Icons.delete),
         ),
       ),
     );

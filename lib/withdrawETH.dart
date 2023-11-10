@@ -225,6 +225,13 @@ class _walletDetailPageState extends State<withdrawETH> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  '보낼 금액',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
                 TextField(
                   controller: amountController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -250,24 +257,11 @@ class _walletDetailPageState extends State<withdrawETH> {
             SizedBox(height: 70),
             Center(
               child: ElevatedButton(
-                onPressed: () async {
-                  sendETH();
-                  final pvAD = await storage.read(key: widget.walletAddress);
-                  if (pvAD != null) {
-                    // print(pvAD.length);
-                    // final tet = privateKeyBytesToPublic(hexToBytes(
-                    //     '1f4f0f2d42396ca654bb66ed2c5816a9c3eff8e76dee738ebf0fa71eada0e589'));
-                    // final test = priva
-                    // print(tet);
-                    // print(test);
-                    // final publictet =
-                    //     '02960e1510b08682595c600ec601466125f2e1d67836ee428801f4122332e57002';
-                    // final publctet2 = publictet.sli
-                    // print(test);
-                    // final pbAD1 = EthereumAddress.fromHex(pvAD);
-                    // print("개인키 -> 주소 : ${pbAD1.hexEip55}");
-                  }
-                },
+                onPressed: isAddressValid && isAmountValid
+                    ? () async {
+                        sendETH();
+                      }
+                    : null,
                 child: Text('출금'),
                 style: ElevatedButton.styleFrom(
                     minimumSize: Size(200, 50),
@@ -275,19 +269,6 @@ class _walletDetailPageState extends State<withdrawETH> {
                     foregroundColor: Colors.orange,
                     side: BorderSide(color: Colors.orange, width: 1.0)),
               ),
-              // child: ElevatedButton(
-              //   onPressed: isAddressValid && isAmountValid
-              //       ? () async {
-              //           sendETH();
-              //         }
-              //       : null,
-              //   child: Text('출금'),
-              //   style: ElevatedButton.styleFrom(
-              //       minimumSize: Size(200, 50),
-              //       backgroundColor: Colors.white,
-              //       foregroundColor: Colors.orange,
-              //       side: BorderSide(color: Colors.orange, width: 1.0)),
-              // ),
             ),
           ],
         ),

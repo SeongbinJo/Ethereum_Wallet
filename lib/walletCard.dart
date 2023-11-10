@@ -7,8 +7,9 @@ import 'package:web3dart/web3dart.dart';
 class walletCard extends StatefulWidget {
   final List<dynamic> wallets;
   final int index;
+  final Future<dynamic> fucn1;
 
-  walletCard({required this.wallets, required this.index});
+  walletCard({required this.wallets, required this.index, required this.fucn1});
 
   @override
   State<walletCard> createState() => _walletCardState();
@@ -78,7 +79,7 @@ class _walletCardState extends State<walletCard> {
       child: Container(
         // margin: EdgeInsets.only(top: 20), // AppBar와의 간격 조정
         width: MediaQuery.of(context).size.width * 0.9, // 배경화면의 90%
-        height: MediaQuery.of(context).size.height * 0.2, // 세로 : 200
+        height: MediaQuery.of(context).size.height * 0.25, // 세로 : 200
         child: Card(
           color: Colors.white,
           child: InkWell(
@@ -87,11 +88,13 @@ class _walletCardState extends State<walletCard> {
                   "현재 클릭한 지갑의 정보 : [지갑 이름 : ${wallet['name']}, 블록체인 : ${wallet['coinType']}, 주소 : ${wallet['address']}");
               print(
                   "해당 주소(${wallet['address']}의 Goerli 잔액은 : ${await getBalance(wallet['address'])} ETH 입니다.");
-              Navigator.push(
+              await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
                           walletDetailPage(walletData: wallet)));
+              // widget.onPopFunction;
+              widget.fucn1;
             }, // 버튼 기능을 넣어줄 수 있습니다.
             child: Center(
               child: Padding(
