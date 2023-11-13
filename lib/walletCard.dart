@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ethereum_wallet/walletDetailPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -22,6 +23,7 @@ class _walletCardState extends State<walletCard> {
       "https://rpc.ankr.com/eth_goerli/9d90d371f709980dd40cdd275ac9b57cafb1014ac195e70618461c3e83b1b870";
 
   dynamic walletETH = "";
+  dynamic walletCAMT = "";
 
   late Timer balanceTimer;
 
@@ -32,6 +34,27 @@ class _walletCardState extends State<walletCard> {
     final address = EthereumAddress.fromHex(publickey);
     final balance = await ethClient.getBalance(address);
     return balance.getValueInUnit(EtherUnit.ether).toStringAsFixed(20);
+  }
+
+  Future<String> getCAMTBalance(String publickey) async {
+    final httpClient = Client();
+    final ethClient = Web3Client(goerliEndPoint, httpClient);
+    final camtAbi = await rootBundle.loadString("assets/CAMTjson.json");
+    final camtTokenAddress = "0x226c08905d91dB6fcC7E3901559F2741cDD33b55";
+
+    final DeployedContract camtContract = DeployedContract(
+        ContractAbi.fromJson(camtAbi, "CAMT"),
+        EthereumAddress.fromHex(camtTokenAddress));
+    final balanceFunction = camtContract.function('balanceOf');
+    final address = EthereumAddress.fromHex(publickey);
+    final balance = await ethClient.call(
+        contract: camtContract,
+        function: balanceFunction,
+        params: [EthereumAddress.fromHex(publickey)]);
+
+    final balanceValue = balance.first;
+    print(balanceValue.runtimeType);
+    return balanceValue.toString();
   }
 
   @override
@@ -50,8 +73,11 @@ class _walletCardState extends State<walletCard> {
   Future<void> fetchBalance() async {
     final balanceResult =
         await getBalance(widget.wallets[widget.index]['address']);
+    final camtBalanceResult =
+        await getCAMTBalance(widget.wallets[widget.index]['address']);
     setState(() {
       walletETH = balanceResult;
+      walletCAMT = camtBalanceResult;
     });
   }
 
@@ -71,8 +97,6 @@ class _walletCardState extends State<walletCard> {
       width: 25,
       height: 25,
     );
-    print(wallet['symbol']);
-    print(wallet.runtimeType);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
@@ -87,7 +111,7 @@ class _walletCardState extends State<walletCard> {
               print(
                   "현재 클릭한 지갑의 정보 : [지갑 이름 : ${wallet['name']}, 블록체인 : ${wallet['coinType']}, 주소 : ${wallet['address']}");
               print(
-                  "해당 주소(${wallet['address']}의 Goerli 잔액은 : ${await getBalance(wallet['address'])} ETH 입니다.");
+                  "해당 주소(${wallet['address']}의 CAMT 잔액은 : ${await getBalance(wallet['address'])} ETH 입니다.");
               await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -110,7 +134,8 @@ class _walletCardState extends State<walletCard> {
                         symbolImage
                       ],
                     ),
-                    Text("잔액 : $walletETH ETH"),
+                    Text("ETH 잔액 : $walletETH ETH"),
+                    Text("CAMT 잔액 : $walletCAMT CAMT"),
                     Text("주소 : ${wallet['address']}"),
                   ],
                 ),
